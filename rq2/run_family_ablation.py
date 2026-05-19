@@ -20,7 +20,6 @@ params on **only** the columns in that combo (intersection with the VIF feature 
 on the **same** held-out test split, and writes ``family_ablation_metrics.csv`` plus a small
 ``family_ablation_run.json`` manifest.
 
-Does **not** modify any other project files.
 
 Example::
 
