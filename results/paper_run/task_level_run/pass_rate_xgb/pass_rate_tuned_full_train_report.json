@@ -1,0 +1,44 @@
+{
+  "Ridge": {
+    "best_params": {
+      "ridge__alpha": 115.67327199145953
+    },
+    "best_cv_score_neg_mse": -0.17659411880927278,
+    "test_metrics": {
+      "rmse": 0.41513676814311207,
+      "mae": 0.3744188722722669,
+      "r2": 0.16929633672585043
+    }
+  },
+  "RandomForest": {
+    "best_params": {
+      "n_estimators": 500,
+      "min_samples_leaf": 4,
+      "max_features": 0.25,
+      "max_depth": null
+    },
+    "best_cv_score_neg_mse": -0.12365755739197107,
+    "test_metrics": {
+      "rmse": 0.3500191745777175,
+      "mae": 0.2757205541650499,
+      "r2": 0.4094626127334289
+    }
+  },
+  "XGBoost": {
+    "best_params": {
+      "subsample": 0.75,
+      "reg_lambda": 1.0,
+      "n_estimators": 400,
+      "min_child_weight": 2,
+      "max_depth": 8,
+      "learning_rate": 0.03,
+      "colsample_bytree": 0.75
+    },
+    "best_cv_score_neg_mse": -0.1251123900778052,
+    "test_metrics": {
+      "rmse": 0.350352185380572,
+      "mae": 0.27634240156044876,
+      "r2": 0.40833839501395086
+    }
+  }
+}

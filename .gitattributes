@@ -1,0 +1,9 @@
+# Normalize text files on checkout
+* text=auto
+
+# Treat large/binary artifacts explicitly
+*.parquet binary
+*.pkl binary
+*.joblib binary
+*.png binary
+*.pdf binary

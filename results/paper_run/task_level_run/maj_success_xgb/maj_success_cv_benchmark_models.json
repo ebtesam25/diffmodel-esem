@@ -1,0 +1,4 @@
+{
+  "skipped_outer_cv": true,
+  "note": "RandomizedSearchCV runs on the full VIF-filtered training set only. Use --nested-cv-tune for nested search on each outer CV fold (unbiased CV curve)."
+}

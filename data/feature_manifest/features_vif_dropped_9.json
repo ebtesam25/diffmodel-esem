@@ -1,0 +1,11 @@
+[
+  "patch_lines_changed_total",
+  "patch_num_files_changed",
+  "patch_mean_file_depth",
+  "prompt_pronoun_ratio",
+  "patch_entropy_over_files",
+  "prompt_clauses_per_sentence",
+  "patch_max_file_depth",
+  "prompt_content_tokens_per_sentence",
+  "prompt_coref_chain_len_mean"
+]

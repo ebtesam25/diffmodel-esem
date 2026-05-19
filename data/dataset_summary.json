@@ -1,0 +1,14 @@
+{
+  "n_tasks": 45769,
+  "n_train": 36615,
+  "n_test": 9154,
+  "n_features_numeric": 63,
+  "pass_rate_mean": 0.5929531997640324,
+  "any_success_rate": 0.6749109659376434,
+  "maj_success_rate": 0.6165963862002666,
+  "n_repositories": 1553,
+  "tasks_by_source": {
+    "SWE_Rebench": 9701,
+    "SWE_Smith": 36068
+  }
+}

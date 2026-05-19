@@ -1,0 +1,22 @@
+{
+  "target": "pass_rate",
+  "classification_threshold_policy": "N/A (regression)",
+  "hyperparameter_selection": "RandomizedSearchCV on train only; inner_cv=4, n_iter\u224828 per family",
+  "models": {
+    "Ridge": {
+      "rmse": 0.41513676814311207,
+      "mae": 0.3744188722722669,
+      "r2": 0.16929633672585043
+    },
+    "RandomForest": {
+      "rmse": 0.3500191745777175,
+      "mae": 0.2757205541650499,
+      "r2": 0.4094626127334289
+    },
+    "XGBoost": {
+      "rmse": 0.350352185380572,
+      "mae": 0.27634240156044876,
+      "r2": 0.40833839501395086
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "description": "Feature groups aligned with paper Tables (patch / repository / prompt sub-constructs).",
+  "groups": {
+    "patch": {
+      "edit_volume": ["patch_lines_added", "patch_lines_deleted", "patch_lines_changed_total"],
+      "edit_fragmentation": ["patch_num_hunks", "patch_edit_fragmentation", "patch_hunk_gap_mean", "patch_test_files_changed"],
+      "file_scope": ["patch_src_files_changed", "patch_python_files_changed", "patch_extensions_changed_count", "patch_num_files_changed"],
+      "churn_distribution": ["patch_churn_gini_over_files", "patch_is_single_file", "patch_entropy_over_files"],
+      "spatial_distribution": ["patch_primary_file_depth", "patch_num_unique_dirs_changed", "patch_mean_file_depth", "patch_max_file_depth"]
+    },
+    "repository": {
+      "scale": ["repo_file_count", "repo_python_file_count", "repo_total_known_size", "repo_mean_known_file_size", "repo_dir_count"],
+      "directory_structure": ["repo_top_level_dir_count", "repo_max_depth", "repo_mean_file_depth", "repo_test_ratio"],
+      "naming_ambiguity": ["repo_basename_collision_count"],
+      "test_infrastructure": ["repo_test_file_count", "repo_has_tests_dir", "repo_has_examples_dir"],
+      "documentation": ["repo_has_docs_dir"]
+    },
+    "prompt": {
+      "component_load": ["prompt_len_bpe", "prompt_sent_count", "prompt_clauses_per_sentence", "prompt_content_tokens_per_sentence"],
+      "coordinative_complexity": ["prompt_dep_distance_mean", "prompt_dep_distance_max", "prompt_branching_factor_mean", "prompt_clause_nesting_depth_mean", "prompt_clause_length_mean", "prompt_clausal_branching_factor"],
+      "coordination_ambiguity": ["prompt_coordination_density", "prompt_mean_conj_chain_len", "prompt_max_conj_chain_len", "prompt_verb_coordination_ratio", "prompt_noun_coordination_ratio"],
+      "attachment_ambiguity": ["prompt_pp_density_per_noun", "prompt_pp_density_per_clause", "prompt_mean_pp_chain_depth", "prompt_max_pp_chain_depth", "prompt_multi_pp_head_ratio", "prompt_attachment_competition_ratio", "prompt_mean_competing_dependents_per_head"],
+      "referential_ambiguity": ["prompt_pronouns_per_sentence", "prompt_pronoun_candidate_antecedent_density", "prompt_multi_antecedent_pronoun_ratio", "prompt_pronoun_ratio"],
+      "cohesion": ["prompt_adjacent_lemma_overlap_mean", "prompt_sentence_embedding_sim_mean", "prompt_sentence_embedding_sim_min", "prompt_entity_reuse_ratio", "prompt_coref_chain_len_mean"]
+    }
+  },
+  "vif_dropped": [
+    "patch_lines_changed_total",
+    "patch_num_files_changed",
+    "patch_mean_file_depth",
+    "patch_max_file_depth",
+    "patch_entropy_over_files",
+    "prompt_clauses_per_sentence",
+    "prompt_content_tokens_per_sentence",
+    "prompt_pronoun_ratio",
+    "prompt_coref_chain_len_mean"
+  ],
+  "vif_selected_count": 54
+}

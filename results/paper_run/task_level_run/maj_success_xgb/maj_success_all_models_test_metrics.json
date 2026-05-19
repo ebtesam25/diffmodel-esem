@@ -1,0 +1,25 @@
+{
+  "target": "maj_success",
+  "classification_threshold_policy": "Youden J on train ROC per model for F1/MCC (threshold reported in each model dict)",
+  "hyperparameter_selection": "RandomizedSearchCV on train only; inner_cv=4, n_iter\u224828 per family",
+  "models": {
+    "RandomForest": {
+      "auc": 0.8475030555420653,
+      "roc_auc": 0.8475030555420653,
+      "pr_auc": 0.8847565125905257,
+      "brier": 0.14684430277308805,
+      "f1": 0.7971201772198634,
+      "mcc": 0.5076848432328476,
+      "optimal_threshold_youden_j_train": 0.6698392824220982
+    },
+    "XGBoost": {
+      "auc": 0.8453176094329237,
+      "roc_auc": 0.8453176094329237,
+      "pr_auc": 0.8839757325990589,
+      "brier": 0.14780104160308838,
+      "f1": 0.8112903225806452,
+      "mcc": 0.5172177302937389,
+      "optimal_threshold_youden_j_train": 0.6454831957817078
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "target": "any_success",
+  "classification_threshold_policy": "Youden J on train ROC per model for F1/MCC (threshold reported in each model dict)",
+  "hyperparameter_selection": "RandomizedSearchCV on train only; inner_cv=4, n_iter\u224828 per family",
+  "models": {
+    "Logistic": {
+      "error": "\nAll the 112 fits failed.\nIt is very likely that your model is misconfigured.\nYou can try to debug the error by setting error_score='raise'.\n\nBelow are more details about the failures:\n--------------------------------------------------------------------------------\n112 fits failed with the following error:\nTraceback (most recent call last):\n  File \"/home/ehaque4/Desktop/projects/johnsonb/ehaque4/code_edit/trace_agents/coderforge/coderforge_clean/venv/lib/python3.12/site-packages/sklearn/model_selection/_validation.py\", line 833, in _fit_and_score\n    estimator.fit(X_train, y_train, **fit_params)\n  File \"/home/ehaque4/Desktop/projects/johnsonb/ehaque4/code_edit/trace_agents/coderforge/coderforge_clean/venv/lib/python3.12/site-packages/sklearn/base.py\", line 1336, in wrapper\n    return fit_method(estimator, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/ehaque4/Desktop/projects/johnsonb/ehaque4/code_edit/trace_agents/coderforge/coderforge_clean/venv/lib/python3.12/site-packages/sklearn/pipeline.py\", line 621, in fit\n    self._final_estimator.fit(Xt, y, **last_step_params[\"fit\"])\n  File \"/home/ehaque4/Desktop/projects/johnsonb/ehaque4/code_edit/trace_agents/coderforge/coderforge_clean/venv/lib/python3.12/site-packages/sklearn/base.py\", line 1336, in wrapper\n    return fit_method(estimator, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/ehaque4/Desktop/projects/johnsonb/ehaque4/code_edit/trace_agents/coderforge/coderforge_clean/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py\", line 1147, in fit\n    solver = _check_solver(self.solver, penalty, self.dual)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/ehaque4/Desktop/projects/johnsonb/ehaque4/code_edit/trace_agents/coderforge/coderforge_clean/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py\", line 65, in _check_solver\n    raise ValueError(\nValueError: Solver lbfgs supports only 'l2' or None penalties, got l1 penalty.\n"
+    },
+    "RandomForest": {
+      "auc": 0.8631593755765343,
+      "roc_auc": 0.8631593755765343,
+      "pr_auc": 0.9139074673687129,
+      "brier": 0.1282816142386593,
+      "f1": 0.8318734586274343,
+      "mcc": 0.5375519362300157,
+      "optimal_threshold_youden_j_train": 0.7184902003123355
+    },
+    "XGBoost": {
+      "auc": 0.8631226623172059,
+      "roc_auc": 0.8631226623172059,
+      "pr_auc": 0.9164027184510726,
+      "brier": 0.12874694168567657,
+      "f1": 0.8475358496785891,
+      "mcc": 0.5489968975103111,
+      "optimal_threshold_youden_j_train": 0.6933659315109253
+    }
+  }
+}

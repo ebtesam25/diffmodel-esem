@@ -1,0 +1,39 @@
+# RQ3 — Which individual features are most strongly associated with agent success?
+
+**Question.** Which features drive predictions, in what direction, and how do they interact?
+
+## Scripts
+
+| File | Paper RQ | Purpose |
+|------|----------|---------|
+| `run_model_shap.py` | **RQ3** | SHAP + interactions on tuned XGBoost from RQ1 `tuned_models/` |
+| `plot_shap_waterfalls.py` | RQ3 | Waterfalls for borderline / average-difficulty tasks |
+| `plot_shap_waterfalls_by_difficulty.py` | RQ3 | Waterfalls for easy / hard / borderline buckets |
+
+Tuning and calibration are **RQ1** (`rq1/run_tuned_evaluation.py` → `lib/replication/tuned_evaluation.py`).
+
+## Outputs
+
+`results/analysis/rq3_feature_importance/model_shap/`
+
+## Run
+
+```bash
+export PYTHONPATH="$(pwd)/lib:$PYTHONPATH"
+export CODERFORGE_REPLICATION_ROOT="$(pwd)"
+
+# After RQ1 tuned evaluation:
+python rq3/run_model_shap.py --verbose
+```
+
+**Optional figures** (after `run_model_shap.py`):
+
+```bash
+OUT=results/analysis/rq3_feature_importance/model_shap
+
+python rq3/plot_shap_waterfalls.py \
+  --outdir "$OUT" --targets any_success --average-n 10 --plot-suffix _avg10
+
+python rq3/plot_shap_waterfalls_by_difficulty.py \
+  --outdir "$OUT" --targets any_success --n-each 10 --plot-suffix _top10
+```

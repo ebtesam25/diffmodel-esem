@@ -1,0 +1,12 @@
+# Replication package for "What makes issue resolution tasks difficult?" (ESEM)
+pandas>=2.0
+pyarrow>=14.0
+numpy>=1.24
+scikit-learn>=1.3
+xgboost>=2.0
+shap>=0.44
+statsmodels>=0.14
+matplotlib>=3.7
+seaborn>=0.13
+scipy>=1.11
+joblib>=1.3
