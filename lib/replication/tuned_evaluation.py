@@ -1173,7 +1173,7 @@ def main() -> None:
         "--no-use-task-loader",
         dest="use_task_loader",
         action="store_false",
-        help="Rare: load --features-path instead of scratch parquets.",
+        help="Rare: load --features-path.",
     )
     parser.add_argument(
         "--outdir",

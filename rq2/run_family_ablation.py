@@ -25,7 +25,7 @@ Does **not** modify any other project files.
 Example::
 
     python scripts/task_level_family_ablation_from_shap_run.py \\
-      --shap-outdir /scratch/ehaque4/coderforge/artifacts/reports/task_level_model_shap \\
+      --shap-outdir /scratch \\
       --verbose
 """
 from __future__ import annotations

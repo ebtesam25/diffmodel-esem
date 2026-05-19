@@ -25,8 +25,7 @@ diffmodel_esem_replication/
 │   ├── plot_shap_waterfalls.py
 │   └── plot_shap_waterfalls_by_difficulty.py
 └── results/
-    ├── paper_run/             # reference
-    └── paper_tables/          # reference
+    └── paper_run/          # reference
     
 ```
 
