@@ -44,7 +44,8 @@ Thumbs.db
 *.ckpt
 
 # Local re-run outputs (frozen reference artifacts stay under results/paper_*)
-results/analysis/
+results/analysis/*
+!results/analysis/.gitkeep
 
 # Incidental run logs
 *.log
