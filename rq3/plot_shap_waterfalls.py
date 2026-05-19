@@ -5,12 +5,8 @@ Plot SHAP waterfall decompositions for selected holdout tasks (RQ3 figures).
 Uses saved tuned XGBoost models from ``run_model_shap.py`` plus the published task-level dataset.
 Does **not** re-run hyperparameter tuning or full-test SHAP export.
 
-Typical use (paper: borderline-difficulty tasks, :math:`\\hat{p} \\approx 0.68`):
-
 - ``--average-n 10`` — tasks with predicted probability closest to the holdout mean
 - ``--plot-suffix _avg10`` — output filename tag
-
-Also writes easiest/hardest single-task waterfalls unless you only request averages.
 
 Example::
 
