@@ -1,6 +1,6 @@
 # Replication package — *What makes software issue resolution tasks difficult?*
 
-Two ways to run this package. They are not interchangeable.
+Two ways to run this package.
 
 
 | Command                 | What it does                                                                   |
@@ -10,7 +10,7 @@ Two ways to run this package. They are not interchangeable.
 | `./run_all.sh --search` | Retrains with `RandomizedSearchCV` for XGBoost.                                |
 
 
-Neither command writes into `results/paper_run/`. Local re-runs go under `results/analysis/` (gitignored).
+Local re-runs go under `results/analysis/` (gitignored).
 
 ## Quick start
 
