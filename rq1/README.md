@@ -20,7 +20,8 @@
 export PYTHONPATH="$(pwd)/lib:$PYTHONPATH"
 export CODERFORGE_REPLICATION_ROOT="$(pwd)"
 python rq1/run_model_comparison.py
-python rq1/run_tuned_evaluation.py --verbose
+python rq1/run_tuned_evaluation.py --verbose                 # published XGB hyperparameters
+python rq1/run_tuned_evaluation.py --search-xgboost --verbose  # optional: re-search XGBoost
 ```
 
-SHAP explainability is **RQ3**: `python rq3/run_model_shap.py` (reads `tuned_models/`). Or use `./run_all.sh`.
+Default tuned evaluation **refits** the `paper_run` XGBoost hyperparameters and writes a **new** pickle under `results/analysis/`. It does not load or overwrite `results/paper_run/`. Use `./run_paper.sh` to score the archived models. Use `./run_all.sh` for the full from-scratch path.

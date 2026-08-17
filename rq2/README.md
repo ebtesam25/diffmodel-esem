@@ -4,7 +4,7 @@
 
 **Script.** `run_family_ablation.py`
 
-**Prerequisite.** Run `rq3/run_model_shap.py` first (reads tuned XGBoost hyperparameters and VIF feature set from that run).
+**Prerequisite.** Run `rq1/run_tuned_evaluation.py` or `./run_all.sh` first (reads the new models under `results/analysis/`). Frozen ablation tables already live in `results/paper_run/tables/`.
 
 **Outputs.** `results/analysis/rq2_feature_groups/family_ablation/`
 

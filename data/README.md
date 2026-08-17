@@ -27,6 +27,8 @@ Each row links a task to its source benchmark instance and gold patch metadata (
 | `base_instance_id` | Upstream benchmark instance id when available.                                      |
 
 
+
+
 ## Outcomes (agent success)
 
 Generated from Qwen3-Coder-480B trajectories in CoderForge-Preview (OpenHands v0.52.1, up to 8 runs per task):
@@ -38,6 +40,8 @@ Generated from Qwen3-Coder-480B trajectories in CoderForge-Preview (OpenHands v0
 | `any_success` | 1 if ≥1 run succeeded (pass@k).                   |
 | `maj_success` | 1 if majority of runs succeeded (≥50% pass rate). |
 | `n_runs`      | Number of trajectories aggregated into this task. |
+
+
 
 
 ## Train/test split

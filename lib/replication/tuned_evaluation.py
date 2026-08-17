@@ -55,7 +55,8 @@ if str(_LIB) not in sys.path:
     sys.path.insert(0, str(_LIB))
 
 from replication.data import load_task_level_data, train_test_indices_from_targets
-from replication.paths import default_dataset_path, default_tuned_models_dir, results_dir_for_rq
+from replication.paths import default_dataset_path, default_tuned_models_dir, load_paper_xgb_hyperparams, results_dir_for_rq
+from replication.shap_analysis import _default_shap_parallel_jobs
 
 # This script fits one family of models; all outcome-specific artifacts use this slug in names.
 PRIMARY_MODEL_SLUG = "xgb"
@@ -763,6 +764,7 @@ def tune_classifiers_full_train(
     tuning_inner_cv: int,
     random_state: int,
     verbose: bool,
+    xgb_fixed_params: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """RandomizedSearchCV per classifier on train; test metrics + Youden threshold from train."""
     import xgboost as xgb
@@ -779,7 +781,7 @@ def tune_classifiers_full_train(
             ("scaler", StandardScaler()),
             (
                 "lr",
-                LogisticRegression(penalty="l1", solver="lbfgs", max_iter=6000, random_state=random_state),
+                LogisticRegression(penalty="l1", solver="liblinear", max_iter=6000, random_state=random_state),
             ),
         ]
     )
@@ -853,46 +855,71 @@ def tune_classifiers_full_train(
 
     # --- XGBoost ---
     try:
-        xgb_base = xgb.XGBClassifier(
-            objective="binary:logistic",
-            eval_metric="auc",
-            random_state=random_state,
-            n_jobs=2,
-            tree_method="hist",
-            verbosity=0,
-        )
-        xgb_dist = {
-            "n_estimators": [100, 200, 300, 400, 600],
-            "max_depth": [3, 4, 5, 6, 8],
-            "learning_rate": [0.01, 0.03, 0.05, 0.08, 0.12],
-            "subsample": [0.6, 0.75, 0.85, 1.0],
-            "colsample_bytree": [0.6, 0.75, 0.85, 1.0],
-            "min_child_weight": [1, 2, 3, 5, 8],
-            "reg_lambda": [1.0, 2.0, 5.0],
-        }
-        search_x = RandomizedSearchCV(
-            xgb_base,
-            xgb_dist,
-            n_iter=max(10, tuning_n_iter),
-            scoring="roc_auc",
-            cv=inner_cv,
-            random_state=random_state + 2,
-            refit=True,
-            n_jobs=1,
-            error_score=np.nan,
-        )
-        search_x.fit(X_train, y_train, **fit_kw)
-        est_x = search_x.best_estimator_
-        pr_tr = est_x.predict_proba(X_train)[:, 1]
-        pr_te = est_x.predict_proba(X_test)[:, 1]
-        out["XGBoost"] = {
-            "best_params": search_x.best_params_,
-            "best_cv_score_roc_auc": float(search_x.best_score_) if np.isfinite(search_x.best_score_) else None,
-            "test_metrics": clf_metrics_youden_train(y_test, pr_te, y_train, pr_tr),
-            "estimator": est_x,
-        }
-        if verbose:
-            print("  Tuned XGBoost:", search_x.best_params_, "CV AUC", search_x.best_score_)
+        if xgb_fixed_params:
+            if verbose:
+                print("  Fitting XGBoost from paper hyperparameters (search skipped):", xgb_fixed_params)
+            est_x = xgb.XGBClassifier(
+                objective="binary:logistic",
+                eval_metric="auc",
+                random_state=random_state,
+                n_jobs=1,
+                tree_method="hist",
+                verbosity=0,
+                **xgb_fixed_params,
+            )
+            est_x.fit(X_train, y_train)
+            pr_tr = est_x.predict_proba(X_train)[:, 1]
+            pr_te = est_x.predict_proba(X_test)[:, 1]
+            out["XGBoost"] = {
+                "best_params": dict(xgb_fixed_params),
+                "best_cv_score_roc_auc": None,
+                "hyperparameter_source": "paper_run",
+                "test_metrics": clf_metrics_youden_train(y_test, pr_te, y_train, pr_tr),
+                "estimator": est_x,
+            }
+            if verbose:
+                print("  Refit XGBoost:", xgb_fixed_params)
+        else:
+            xgb_base = xgb.XGBClassifier(
+                objective="binary:logistic",
+                eval_metric="auc",
+                random_state=random_state,
+                n_jobs=2,
+                tree_method="hist",
+                verbosity=0,
+            )
+            xgb_dist = {
+                "n_estimators": [100, 200, 300, 400, 600],
+                "max_depth": [3, 4, 5, 6, 8],
+                "learning_rate": [0.01, 0.03, 0.05, 0.08, 0.12],
+                "subsample": [0.6, 0.75, 0.85, 1.0],
+                "colsample_bytree": [0.6, 0.75, 0.85, 1.0],
+                "min_child_weight": [1, 2, 3, 5, 8],
+                "reg_lambda": [1.0, 2.0, 5.0],
+            }
+            search_x = RandomizedSearchCV(
+                xgb_base,
+                xgb_dist,
+                n_iter=max(10, tuning_n_iter),
+                scoring="roc_auc",
+                cv=inner_cv,
+                random_state=random_state + 2,
+                refit=True,
+                n_jobs=1,
+                error_score=np.nan,
+            )
+            search_x.fit(X_train, y_train, **fit_kw)
+            est_x = search_x.best_estimator_
+            pr_tr = est_x.predict_proba(X_train)[:, 1]
+            pr_te = est_x.predict_proba(X_test)[:, 1]
+            out["XGBoost"] = {
+                "best_params": search_x.best_params_,
+                "best_cv_score_roc_auc": float(search_x.best_score_) if np.isfinite(search_x.best_score_) else None,
+                "test_metrics": clf_metrics_youden_train(y_test, pr_te, y_train, pr_tr),
+                "estimator": est_x,
+            }
+            if verbose:
+                print("  Tuned XGBoost:", search_x.best_params_, "CV AUC", search_x.best_score_)
     except Exception as e:
         out["XGBoost"] = {"error": str(e), "estimator": None}
 
@@ -911,6 +938,7 @@ def tune_regressors_full_train(
     tuning_inner_cv: int,
     random_state: int,
     verbose: bool,
+    xgb_fixed_params: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     import xgboost as xgb
 
@@ -990,44 +1018,67 @@ def tune_regressors_full_train(
         out["RandomForest"] = {"error": str(e)}
 
     try:
-        xgb_base = xgb.XGBRegressor(
-            objective="reg:squarederror",
-            random_state=random_state,
-            n_jobs=2,
-            tree_method="hist",
-            verbosity=0,
-        )
-        xgb_dist = {
-            "n_estimators": [100, 200, 300, 400, 600],
-            "max_depth": [3, 4, 5, 6, 8],
-            "learning_rate": [0.01, 0.03, 0.05, 0.08, 0.12],
-            "subsample": [0.6, 0.75, 0.85, 1.0],
-            "colsample_bytree": [0.6, 0.75, 0.85, 1.0],
-            "min_child_weight": [1, 2, 3, 5, 8],
-            "reg_lambda": [1.0, 2.0, 5.0],
-        }
-        search_x = RandomizedSearchCV(
-            xgb_base,
-            xgb_dist,
-            n_iter=max(10, tuning_n_iter),
-            scoring="neg_mean_squared_error",
-            cv=inner_cv,
-            random_state=random_state + 2,
-            refit=True,
-            n_jobs=1,
-            error_score=np.nan,
-        )
-        search_x.fit(X_train, y_train, **fit_kw)
-        est_x = search_x.best_estimator_
-        pred_te = np.clip(est_x.predict(X_test), 0.0, 1.0)
-        out["XGBoost"] = {
-            "best_params": search_x.best_params_,
-            "best_cv_score_neg_mse": float(search_x.best_score_) if np.isfinite(search_x.best_score_) else None,
-            "test_metrics": reg_metrics(y_test, pred_te),
-            "estimator": est_x,
-        }
-        if verbose:
-            print("  Tuned XGBoost:", search_x.best_params_)
+        if xgb_fixed_params:
+            if verbose:
+                print("  Fitting XGBoost from paper hyperparameters (search skipped):", xgb_fixed_params)
+            est_x = xgb.XGBRegressor(
+                objective="reg:squarederror",
+                random_state=random_state,
+                n_jobs=1,
+                tree_method="hist",
+                verbosity=0,
+                **xgb_fixed_params,
+            )
+            est_x.fit(X_train, y_train)
+            pred_te = np.clip(est_x.predict(X_test), 0.0, 1.0)
+            out["XGBoost"] = {
+                "best_params": dict(xgb_fixed_params),
+                "best_cv_score_neg_mse": None,
+                "hyperparameter_source": "paper_run",
+                "test_metrics": reg_metrics(y_test, pred_te),
+                "estimator": est_x,
+            }
+            if verbose:
+                print("  Refit XGBoost:", xgb_fixed_params)
+        else:
+            xgb_base = xgb.XGBRegressor(
+                objective="reg:squarederror",
+                random_state=random_state,
+                n_jobs=2,
+                tree_method="hist",
+                verbosity=0,
+            )
+            xgb_dist = {
+                "n_estimators": [100, 200, 300, 400, 600],
+                "max_depth": [3, 4, 5, 6, 8],
+                "learning_rate": [0.01, 0.03, 0.05, 0.08, 0.12],
+                "subsample": [0.6, 0.75, 0.85, 1.0],
+                "colsample_bytree": [0.6, 0.75, 0.85, 1.0],
+                "min_child_weight": [1, 2, 3, 5, 8],
+                "reg_lambda": [1.0, 2.0, 5.0],
+            }
+            search_x = RandomizedSearchCV(
+                xgb_base,
+                xgb_dist,
+                n_iter=max(10, tuning_n_iter),
+                scoring="neg_mean_squared_error",
+                cv=inner_cv,
+                random_state=random_state + 2,
+                refit=True,
+                n_jobs=1,
+                error_score=np.nan,
+            )
+            search_x.fit(X_train, y_train, **fit_kw)
+            est_x = search_x.best_estimator_
+            pred_te = np.clip(est_x.predict(X_test), 0.0, 1.0)
+            out["XGBoost"] = {
+                "best_params": search_x.best_params_,
+                "best_cv_score_neg_mse": float(search_x.best_score_) if np.isfinite(search_x.best_score_) else None,
+                "test_metrics": reg_metrics(y_test, pred_te),
+                "estimator": est_x,
+            }
+            if verbose:
+                print("  Tuned XGBoost:", search_x.best_params_)
     except Exception as e:
         out["XGBoost"] = {"error": str(e), "estimator": None}
 
@@ -1239,6 +1290,14 @@ def main() -> None:
     )
     parser.add_argument("--shap-top-interactions", type=int, default=50)
     parser.add_argument("--no-interactions", action="store_true", help="Skip shap_interaction_values.")
+    parser.add_argument(
+        "--search-xgboost",
+        action="store_true",
+        help=(
+            "Run RandomizedSearchCV for XGBoost. Default is to refit the published "
+            "paper_run hyperparameters so re-runs keep the camera-ready 400-tree model class."
+        ),
+    )
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
 
@@ -1528,9 +1587,18 @@ def main() -> None:
                 json.dumps(cv_stats, indent=2, default=str)
             )
 
-            print(
-                f"RandomizedSearchCV per model (n_iter≈{args.tuning_n_iter}, inner_cv={args.tuning_inner_cv})..."
+            xgb_fixed_params = (
+                None if args.search_xgboost else load_paper_xgb_hyperparams(target)
             )
+            if xgb_fixed_params is None:
+                print(
+                    f"RandomizedSearchCV per model (n_iter≈{args.tuning_n_iter}, inner_cv={args.tuning_inner_cv})..."
+                )
+            else:
+                print(
+                    "RandomizedSearchCV for non-XGB models; XGBoost refit from paper_run hyperparameters "
+                    f"{xgb_fixed_params}"
+                )
             if not is_regression:
                 tuned_pack = tune_classifiers_full_train(
                     X_train,
@@ -1543,6 +1611,7 @@ def main() -> None:
                     tuning_inner_cv=args.tuning_inner_cv,
                     random_state=args.random_state,
                     verbose=args.verbose,
+                    xgb_fixed_params=xgb_fixed_params,
                 )
             else:
                 tuned_pack = tune_regressors_full_train(
@@ -1556,6 +1625,7 @@ def main() -> None:
                     tuning_inner_cv=args.tuning_inner_cv,
                     random_state=args.random_state,
                     verbose=args.verbose,
+                    xgb_fixed_params=xgb_fixed_params,
                 )
 
             def _strip_estimators(p: Dict[str, Any]) -> Dict[str, Any]:
