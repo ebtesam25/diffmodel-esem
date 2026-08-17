@@ -1,0 +1,7 @@
+# Optional deps if running preprocessing/*.py (not required for run_paper.sh / run_all.sh).
+datasets>=2.14
+pyarrow>=14
+pandas>=2.0
+spacy>=3.7
+tiktoken>=0.5
+# After install: python -m spacy download en_core_web_sm

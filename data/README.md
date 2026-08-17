@@ -1,6 +1,6 @@
 # Dataset
 
-This folder contains the **analysis dataset** for the paper.
+This folder contains the **analysis dataset** for the paper. Use `./run_paper.sh` or `./run_all.sh`; the shipped parquet is the intended artifact.
 
 ## Main file
 
@@ -71,5 +71,3 @@ Columns prefixed with `patch_`, `repo_`, or `prompt_` are the static task featur
 | `make_train_test_split.py`                       | Regenerate `splits/train_test_split.csv`.   |
 | `feature_manifest/features_vif_selected_54.json` | Features retained after VIF (threshold 10). |
 | `feature_manifest/features_vif_dropped_9.json`   | Features removed by VIF.                    |
-
-

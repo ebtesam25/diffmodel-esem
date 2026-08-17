@@ -40,6 +40,8 @@ diffmodel_esem_replication/
 ├── run_all.sh                 # train from scratch → results/analysis/
 ├── requirements.txt
 ├── data/
+├── preprocessing/             # archival upstream scripts (not used by run_*.sh)
+│   └── requirements-extract.txt
 ├── lib/replication/
 ├── rq1/  rq2/  rq3/
 └── results/
